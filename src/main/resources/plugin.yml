@@ -1,0 +1,4 @@
+main: de.linzn.restfulapi.RestFulApiPlugin
+name: web-api
+version: ${project.version}
+depend: [system-chain]
