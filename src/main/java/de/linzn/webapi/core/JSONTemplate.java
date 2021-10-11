@@ -9,7 +9,7 @@
  *
  */
 
-package de.linzn.restfulapi.core;
+package de.linzn.webapi.core;
 
 import org.json.JSONObject;
 

@@ -9,31 +9,31 @@
  *
  */
 
-package de.linzn.restfulapi.api;
+package de.linzn.webapi.core;
 
 
 import com.sun.net.httpserver.HttpServer;
-import de.linzn.restfulapi.api.handler.ApiHandler;
+import de.linzn.webapi.handler.WebCallHandler;
 import de.stem.stemSystem.STEMSystemApp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
-public class APIWebserver {
+public class WebServer {
 
     private HttpServer apiServer;
-    private String hostname;
-    private int port;
-    private ApiHandler apiHandler;
+    private final String hostname;
+    private final int port;
+    private final WebCallHandler webCallHandler;
 
-    public APIWebserver(String host, int port) {
+    public WebServer(String host, int port) {
         this.hostname = host;
         this.port = port;
-        this.apiHandler = new ApiHandler();
+        this.webCallHandler = new WebCallHandler();
         try {
             apiServer = HttpServer.create(new InetSocketAddress(host, port), 0);
-            apiServer.createContext("/", apiHandler);
+            apiServer.createContext("/", webCallHandler);
             apiServer.setExecutor(Executors.newSingleThreadExecutor());
         } catch (IOException e) {
             STEMSystemApp.LOGGER.ERROR(e);
@@ -56,7 +56,7 @@ public class APIWebserver {
         return port;
     }
 
-    public ApiHandler getApiHandler() {
-        return this.apiHandler;
+    public WebCallHandler getApiHandler() {
+        return this.webCallHandler;
     }
 }
