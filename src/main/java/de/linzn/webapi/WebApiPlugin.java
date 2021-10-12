@@ -38,9 +38,13 @@ public class WebApiPlugin extends STEMPlugin {
         this.webServer.stop();
     }
 
+    public WebServer getWebServer() {
+        return this.webServer;
+    }
+
     private void setupConfig() {
-        this.getDefaultConfig().getString("server.hostname","localhost");
-        this.getDefaultConfig().getInt("server.port",8081);
+        this.getDefaultConfig().getString("server.hostname", "localhost");
+        this.getDefaultConfig().getInt("server.port", 8081);
         this.getDefaultConfig().save();
     }
 

@@ -13,7 +13,7 @@ package de.linzn.webapi.core;
 
 
 import com.sun.net.httpserver.HttpServer;
-import de.linzn.webapi.handler.WebCallHandler;
+import de.linzn.webapi.handler.SubCallHandler;
 import de.stem.stemSystem.STEMSystemApp;
 
 import java.io.IOException;
@@ -22,22 +22,27 @@ import java.util.concurrent.Executors;
 
 public class WebServer {
 
-    private HttpServer apiServer;
     private final String hostname;
     private final int port;
-    private final WebCallHandler webCallHandler;
+    private HttpServer apiServer;
 
     public WebServer(String host, int port) {
         this.hostname = host;
         this.port = port;
-        this.webCallHandler = new WebCallHandler();
         try {
             apiServer = HttpServer.create(new InetSocketAddress(host, port), 0);
-            apiServer.createContext("/", webCallHandler);
             apiServer.setExecutor(Executors.newSingleThreadExecutor());
         } catch (IOException e) {
             STEMSystemApp.LOGGER.ERROR(e);
         }
+    }
+
+    public void registerContextSub(SubCallHandler subCallHandler) {
+        this.apiServer.createContext(subCallHandler.getWebPath(), subCallHandler);
+    }
+
+    public void unregisterContextSub(SubCallHandler subCallHandler) {
+        this.apiServer.removeContext(subCallHandler.getWebPath());
     }
 
     public void start() {
@@ -48,15 +53,4 @@ public class WebServer {
         this.apiServer.stop(0);
     }
 
-    public String getHostname() {
-        return hostname;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public WebCallHandler getApiHandler() {
-        return this.webCallHandler;
-    }
 }
