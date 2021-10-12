@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2021. Niklas Linz - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the LGPLv3 license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the LGPLv3 license with
+ * this file. If not, please write to: niklas.linz@enigmar.de
+ *
+ */
+
 package de.linzn.webapi.handler;
 
 import com.sun.net.httpserver.Headers;
@@ -20,7 +31,7 @@ public abstract class SubCallHandler implements HttpHandler {
         this.subPath = subPath;
     }
 
-    private static Map<String, String> headerList() {
+    private static Map<String, String> header() {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("Access-Control-Allow-Origin", "*");
         map.put("Content-Type", "application/json; charset=UTF-8");
@@ -34,8 +45,8 @@ public abstract class SubCallHandler implements HttpHandler {
             Object response = callHttpEvent(exchange);
             Headers h = exchange.getResponseHeaders();
 
-            for (String key : headerList().keySet()) {
-                h.set(key, headerList().get(key));
+            for (String key : header().keySet()) {
+                h.set(key, header().get(key));
             }
 
             exchange.sendResponseHeaders(200, response.toString().length());
