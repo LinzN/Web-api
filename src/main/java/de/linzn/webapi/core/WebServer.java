@@ -13,7 +13,7 @@ package de.linzn.webapi.core;
 
 
 import com.sun.net.httpserver.HttpServer;
-import de.linzn.webapi.handler.SubCallHandler;
+import de.linzn.webapi.handler.CallModule;
 import de.stem.stemSystem.STEMSystemApp;
 
 import java.io.IOException;
@@ -37,12 +37,12 @@ public class WebServer {
         }
     }
 
-    public void registerContextSub(SubCallHandler subCallHandler) {
-        this.apiServer.createContext(subCallHandler.getWebPath(), subCallHandler);
+    public void enableCallModule(CallModule callModule) {
+        this.apiServer.createContext("/" + callModule.getModuleName(), callModule);
     }
 
-    public void unregisterContextSub(SubCallHandler subCallHandler) {
-        this.apiServer.removeContext(subCallHandler.getWebPath());
+    public void disableCallModule(CallModule callModule) {
+        this.apiServer.removeContext("/" + callModule.getModuleName());
     }
 
     public void start() {
