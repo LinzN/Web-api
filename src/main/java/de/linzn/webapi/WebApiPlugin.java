@@ -13,7 +13,7 @@ package de.linzn.webapi;
 
 
 import de.linzn.webapi.core.WebServer;
-import de.linzn.webapi.defaultSubHandler.HandlerSetup;
+import de.linzn.webapi.defaultWebModules.HandlerSetup;
 import de.stem.stemSystem.modules.pluginModule.STEMPlugin;
 
 

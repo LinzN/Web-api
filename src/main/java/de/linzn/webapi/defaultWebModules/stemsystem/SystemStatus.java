@@ -1,17 +1,18 @@
-package de.linzn.webapi.defaultSubHandler.stemsystem;
+package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
 import de.linzn.systemChain.callbacks.NetworkScheduler;
-import de.linzn.webapi.handler.SubCallHandler;
+import de.linzn.webapi.core.HttpRequestClientPayload;
+import de.linzn.webapi.handler.RequestInterface;
 import de.stem.stemSystem.utils.JavaUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class SystemStatus extends SubCallHandler {
+public class SystemStatus extends RequestInterface {
 
     @Override
-    public Object callHttpEvent(HttpExchange exchange) throws IOException {
+    public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         double load = JavaUtils.getSystemLoad();
         int cores = JavaUtils.getCoreAmount();
 

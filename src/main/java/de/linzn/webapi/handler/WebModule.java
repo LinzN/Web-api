@@ -14,6 +14,7 @@ package de.linzn.webapi.handler;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.stem.stemSystem.STEMSystemApp;
 import org.json.JSONObject;
 
@@ -23,12 +24,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CallModule implements HttpHandler {
+public class WebModule implements HttpHandler {
 
     private final String moduleName;
-    private final Map<String, SubCallHandler> pathMap;
+    private final Map<String, RequestInterface> pathMap;
 
-    public CallModule(String moduleName) {
+    public WebModule(String moduleName) {
         this.moduleName = moduleName;
         this.pathMap = new HashMap<>();
     }
@@ -47,8 +48,8 @@ public class CallModule implements HttpHandler {
         return Arrays.copyOfRange(rawArray, 1, rawArray.length);
     }
 
-    public void registerSubCallHandler(SubCallHandler subCallHandler, String path) {
-        this.pathMap.put(path, subCallHandler);
+    public void registerSubCallHandler(RequestInterface requestInterface, String path) {
+        this.pathMap.put(path, requestInterface);
     }
 
     public void unregisterSubCallHandler(String path) {
@@ -62,26 +63,26 @@ public class CallModule implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) {
         String[] args = splitURL(exchange.getRequestURI().getRawPath());
-        SubCallHandler subCallHandler = null;
+        RequestInterface requestInterface = null;
 
         int code = 0;
         if (args.length == 0) {
             if (pathMap.containsKey("$_root")) {
-                subCallHandler = pathMap.get("$_root");
+                requestInterface = pathMap.get("$_root");
             }
         } else if (pathMap.containsKey(args[0])) {
-            subCallHandler = pathMap.get(args[0]);
+            requestInterface = pathMap.get(args[0]);
         }
 
-        if (subCallHandler == null) {
+        if (requestInterface == null) {
             code = 404;
         }
 
         try {
             Object payload = new JSONObject();
 
-            if (subCallHandler != null) {
-                payload = subCallHandler.callHttpEvent(exchange);
+            if (requestInterface != null) {
+                payload = requestInterface.callHttpEvent(exchange, new HttpRequestClientPayload(exchange));
             }
 
             JSONObject data = new JSONObject();

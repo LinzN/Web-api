@@ -13,7 +13,7 @@ package de.linzn.webapi.core;
 
 
 import com.sun.net.httpserver.HttpServer;
-import de.linzn.webapi.handler.CallModule;
+import de.linzn.webapi.handler.WebModule;
 import de.stem.stemSystem.STEMSystemApp;
 
 import java.io.IOException;
@@ -37,12 +37,12 @@ public class WebServer {
         }
     }
 
-    public void enableCallModule(CallModule callModule) {
-        this.apiServer.createContext("/" + callModule.getModuleName(), callModule);
+    public void enableCallModule(WebModule webModule) {
+        this.apiServer.createContext("/" + webModule.getModuleName(), webModule);
     }
 
-    public void disableCallModule(CallModule callModule) {
-        this.apiServer.removeContext("/" + callModule.getModuleName());
+    public void disableCallModule(WebModule webModule) {
+        this.apiServer.removeContext("/" + webModule.getModuleName());
     }
 
     public void start() {

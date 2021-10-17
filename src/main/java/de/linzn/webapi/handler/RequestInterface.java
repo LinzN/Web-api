@@ -12,10 +12,11 @@
 package de.linzn.webapi.handler;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.webapi.core.HttpRequestClientPayload;
 
 import java.io.IOException;
 
-public abstract class SubCallHandler {
+public abstract class RequestInterface {
 
-    public abstract Object callHttpEvent(HttpExchange exchange) throws IOException;
+    public abstract Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException;
 }

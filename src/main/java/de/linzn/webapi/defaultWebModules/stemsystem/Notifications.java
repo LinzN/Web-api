@@ -1,7 +1,8 @@
-package de.linzn.webapi.defaultSubHandler.stemsystem;
+package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.linzn.webapi.handler.SubCallHandler;
+import de.linzn.webapi.core.HttpRequestClientPayload;
+import de.linzn.webapi.handler.RequestInterface;
 import de.stem.stemSystem.STEMSystemApp;
 import de.stem.stemSystem.modules.notificationModule.archive.ArchivedNotification;
 import org.json.JSONArray;
@@ -13,10 +14,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class Notifications extends SubCallHandler {
+public class Notifications extends RequestInterface {
 
     @Override
-    public Object callHttpEvent(HttpExchange exchange) throws IOException {
+    public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy", Locale.GERMANY);
 
         List<ArchivedNotification> list = STEMSystemApp.getInstance().getNotificationModule().getNotificationArchive().getLastNotifications();
