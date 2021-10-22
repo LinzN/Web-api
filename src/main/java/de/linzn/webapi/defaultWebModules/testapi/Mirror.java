@@ -1,13 +1,13 @@
-package de.linzn.webapi.defaultWebModules.stemsystem;
+package de.linzn.webapi.defaultWebModules.testapi;
 
 import com.sun.net.httpserver.HttpExchange;
 import de.linzn.webapi.core.HttpRequestClientPayload;
-import de.linzn.webapi.handler.RequestInterface;
+import de.linzn.webapi.modules.RequestInterface;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class ApiTest extends RequestInterface {
+public class Mirror extends RequestInterface {
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {

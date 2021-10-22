@@ -13,7 +13,7 @@ package de.linzn.webapi.core;
 
 
 import com.sun.net.httpserver.HttpServer;
-import de.linzn.webapi.handler.WebModule;
+import de.linzn.webapi.modules.WebModule;
 import de.stem.stemSystem.STEMSystemApp;
 
 import java.io.IOException;

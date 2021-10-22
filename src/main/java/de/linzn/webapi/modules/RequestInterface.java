@@ -9,7 +9,7 @@
  *
  */
 
-package de.linzn.webapi.handler;
+package de.linzn.webapi.modules;
 
 import com.sun.net.httpserver.HttpExchange;
 import de.linzn.webapi.core.HttpRequestClientPayload;

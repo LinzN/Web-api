@@ -3,7 +3,7 @@ package de.linzn.webapi.defaultWebModules.stemsystem;
 import com.sun.net.httpserver.HttpExchange;
 import de.linzn.systemChain.callbacks.NetworkScheduler;
 import de.linzn.webapi.core.HttpRequestClientPayload;
-import de.linzn.webapi.handler.RequestInterface;
+import de.linzn.webapi.modules.RequestInterface;
 import de.stem.stemSystem.utils.JavaUtils;
 import org.json.JSONObject;
 

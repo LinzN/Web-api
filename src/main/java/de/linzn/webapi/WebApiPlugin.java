@@ -13,7 +13,7 @@ package de.linzn.webapi;
 
 
 import de.linzn.webapi.core.WebServer;
-import de.linzn.webapi.defaultWebModules.HandlerSetup;
+import de.linzn.webapi.defaultWebModules.DefaultHandlerSetup;
 import de.stem.stemSystem.modules.pluginModule.STEMPlugin;
 
 
@@ -32,7 +32,7 @@ public class WebApiPlugin extends STEMPlugin {
         this.setupConfig();
         this.webServer = new WebServer(this.getDefaultConfig().getString("server.hostname"), this.getDefaultConfig().getInt("server.port"));
         this.webServer.start();
-        new HandlerSetup();
+        new DefaultHandlerSetup();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WebApiPlugin extends STEMPlugin {
     }
 
     private void setupConfig() {
-        this.getDefaultConfig().getString("server.hostname", "localhost");
+        this.getDefaultConfig().getString("server.hostname", "0.0.0.0");
         this.getDefaultConfig().getInt("server.port", 8082);
         this.getDefaultConfig().save();
     }
