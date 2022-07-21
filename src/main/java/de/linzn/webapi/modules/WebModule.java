@@ -19,6 +19,7 @@ import de.stem.stemSystem.STEMSystemApp;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -96,9 +97,9 @@ public class WebModule implements HttpHandler {
                 h.set(key, header().get(key));
             }
 
-            exchange.sendResponseHeaders(200, data.toString().length());
+            exchange.sendResponseHeaders(200, 0);
             OutputStream os = exchange.getResponseBody();
-            os.write(data.toString().getBytes());
+            os.write(data.toString().getBytes(StandardCharsets.UTF_8));
             os.close();
         } catch (Exception e) {
             STEMSystemApp.LOGGER.ERROR(e);
