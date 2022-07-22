@@ -34,6 +34,9 @@ public class SystemStatus extends RequestInterface {
 
         int memoryLoad = (int) ((100 / maxMemory) * usedMemory);
 
+        long spaceUsable = JavaUtils.getUsableSpace();
+        long spaceTotal = JavaUtils.getTotalSpace();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ping", NetworkScheduler.getLastPing());
         jsonObject.put("status", "OK");
@@ -41,6 +44,8 @@ public class SystemStatus extends RequestInterface {
         jsonObject.put("memoryLoad", memoryLoad);
         jsonObject.put("memoryTotal", maxMemory);
         jsonObject.put("memoryUsed", usedMemory);
+        jsonObject.put("spaceUsable", spaceUsable);
+        jsonObject.put("spaceTotal", spaceTotal);
         return jsonObject;
     }
 }
