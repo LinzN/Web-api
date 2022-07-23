@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class InformationBlocks extends RequestInterface {
-    Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy", Locale.GERMANY);
+    Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy - HH:mm:ss", Locale.GERMANY);
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
