@@ -20,9 +20,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class InformationBlocks extends RequestInterface {
+    Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy", Locale.GERMANY);
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
@@ -56,6 +61,7 @@ public class InformationBlocks extends RequestInterface {
         informationBlockJSON.put("description", informationBlock.getDescription());
         informationBlockJSON.put("sourcePlugin", informationBlock.getSourcePlugin().getPluginName());
         informationBlockJSON.put("active", informationBlock.isActive());
+        informationBlockJSON.put("creationDate", dateFormat.format(new Date(informationBlock.getCreationTime())));
         return informationBlockJSON;
     }
 }
