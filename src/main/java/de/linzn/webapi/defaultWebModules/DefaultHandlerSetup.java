@@ -12,6 +12,7 @@
 package de.linzn.webapi.defaultWebModules;
 
 import de.linzn.webapi.WebApiPlugin;
+import de.linzn.webapi.defaultWebModules.stemsystem.InformationBlocks;
 import de.linzn.webapi.defaultWebModules.testapi.Mirror;
 import de.linzn.webapi.defaultWebModules.stemsystem.ConsoleOutput;
 import de.linzn.webapi.defaultWebModules.stemsystem.Notifications;
@@ -36,6 +37,7 @@ public class DefaultHandlerSetup {
         stemWebModule.registerSubCallHandler(new SystemStatus(), "status");
         stemWebModule.registerSubCallHandler(new ConsoleOutput(), "console");
         stemWebModule.registerSubCallHandler(new Notifications(), "notifications");
+        stemWebModule.registerSubCallHandler(new InformationBlocks(), "informationblocks");
         WebApiPlugin.webApiPlugin.getWebServer().enableCallModule(stemWebModule);
     }
 }
