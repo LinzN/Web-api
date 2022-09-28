@@ -60,6 +60,7 @@ public class InformationBlocks extends RequestInterface {
         informationBlockJSON.put("name", informationBlock.getName());
         informationBlockJSON.put("description", informationBlock.getDescription());
         informationBlockJSON.put("sourcePlugin", informationBlock.getSourcePlugin().getPluginName());
+        informationBlockJSON.put("icon", informationBlock.getIcon());
         informationBlockJSON.put("active", informationBlock.isActive());
         informationBlockJSON.put("creationDate", dateFormat.format(new Date(informationBlock.getCreationTime())));
         return informationBlockJSON;
