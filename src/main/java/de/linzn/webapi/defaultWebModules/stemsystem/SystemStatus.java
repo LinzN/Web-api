@@ -12,6 +12,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.openJL.system.HardwareResources;
 import de.linzn.systemChain.callbacks.NetworkScheduler;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
@@ -24,18 +25,18 @@ public class SystemStatus extends RequestInterface {
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
-        double load = JavaUtils.getSystemLoad();
-        int cores = JavaUtils.getCoreAmount();
+        double load = HardwareResources.getSystemLoad();
+        int cores = HardwareResources.getCoreAmount();
 
-        double usedMemory = JavaUtils.getUsedMemory();
-        double maxMemory = JavaUtils.getMaxMemory();
+        double usedMemory = HardwareResources.getUsedMemory();
+        double maxMemory = HardwareResources.getMaxMemory();
 
         int cpuLoad = (int) ((load * 100) / cores);
 
         int memoryLoad = (int) ((100 / maxMemory) * usedMemory);
 
-        long spaceUsable = JavaUtils.getUsableSpace();
-        long spaceTotal = JavaUtils.getTotalSpace();
+        long spaceUsable = HardwareResources.getUsableSpace();
+        long spaceTotal = HardwareResources.getTotalSpace();
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ping", NetworkScheduler.getLastPing());
