@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.LogRecord;
 
 public class ConsoleOutput extends RequestInterface {
@@ -26,7 +28,8 @@ public class ConsoleOutput extends RequestInterface {
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         JSONArray jsonArray = new JSONArray();
-        for (LogRecord entry : STEMSystemApp.LOGGER.getLastEntries(30)) {
+        final List<LogRecord> list = STEMSystemApp.LOGGER.getLastEntries(30);
+        for (LogRecord entry : new ArrayList<>(list)) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("text", entry.getMessage());
             jsonObject.put("htmlText", STEMSystemApp.logSystem.htmlFormatter.format(entry));
