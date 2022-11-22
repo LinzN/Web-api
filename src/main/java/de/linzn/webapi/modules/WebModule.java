@@ -50,11 +50,11 @@ public class WebModule implements HttpHandler {
     }
 
     public void registerSubCallHandler(RequestInterface requestInterface, String path) {
-        this.pathMap.put(path, requestInterface);
+        this.pathMap.put(path.toLowerCase(), requestInterface);
     }
 
     public void unregisterSubCallHandler(String path) {
-        this.pathMap.remove(path);
+        this.pathMap.remove(path.toLowerCase());
     }
 
     public String getModuleName() {
@@ -71,8 +71,8 @@ public class WebModule implements HttpHandler {
             if (pathMap.containsKey("$_root")) {
                 requestInterface = pathMap.get("$_root");
             }
-        } else if (pathMap.containsKey(args[0])) {
-            requestInterface = pathMap.get(args[0]);
+        } else if (pathMap.containsKey(args[0].toLowerCase())) {
+            requestInterface = pathMap.get(args[0].toLowerCase());
         }
 
         if (requestInterface == null) {

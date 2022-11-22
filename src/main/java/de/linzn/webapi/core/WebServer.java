@@ -38,11 +38,11 @@ public class WebServer {
     }
 
     public void enableCallModule(WebModule webModule) {
-        this.apiServer.createContext("/" + webModule.getModuleName(), webModule);
+        this.apiServer.createContext("/" + webModule.getModuleName().toLowerCase(), webModule);
     }
 
     public void disableCallModule(WebModule webModule) {
-        this.apiServer.removeContext("/" + webModule.getModuleName());
+        this.apiServer.removeContext("/" + webModule.getModuleName().toLowerCase());
     }
 
     public void start() {
