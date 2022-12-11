@@ -31,9 +31,15 @@ public class Reboot extends RequestInterface {
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         JSONObject jsonObject = new JSONObject();
         JSONObject postData = (JSONObject) httpRequestClientPayload.getPostData();
+
+        String ipAddress = exchange.getRequestHeaders().getFirst("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = exchange.getRemoteAddress().getAddress().getHostAddress();
+        }
+
         STEMSystemApp.LOGGER.CORE("--EMERGENCY WEBAPI--");
         STEMSystemApp.LOGGER.CORE("Request emergency reboot from WEBAPI:");
-        STEMSystemApp.LOGGER.CORE("Backend IP: " + exchange.getRemoteAddress().getAddress().toString());
+        STEMSystemApp.LOGGER.CORE("Requester IP: " + ipAddress);
         STEMSystemApp.LOGGER.CORE("PostData: " + postData.toString());
 
         String requestAction = postData.get("requestAction").toString();
