@@ -31,7 +31,7 @@ public class WebServer {
         this.port = port;
         try {
             apiServer = HttpServer.create(new InetSocketAddress(host, port), 0);
-            apiServer.setExecutor(Executors.newSingleThreadExecutor());
+            apiServer.setExecutor(Executors.newCachedThreadPool());
         } catch (IOException e) {
             STEMSystemApp.LOGGER.ERROR(e);
         }
