@@ -2,3 +2,5 @@ main: de.linzn.webapi.WebApiPlugin
 name: web-api
 version: ${project.version}
 depend: [ system-chain ]
+buildJobName: ${buildServer.jobName}
+buildNumber: ${buildServer.buildNumber}
