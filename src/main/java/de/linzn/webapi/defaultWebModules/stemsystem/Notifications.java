@@ -12,6 +12,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
 import de.stem.stemSystem.STEMSystemApp;
@@ -29,6 +30,7 @@ public class Notifications extends RequestInterface {
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
+        ApiResponse apiResponse = new ApiResponse();
         Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy", Locale.GERMANY);
 
         List<ArchivedNotification> list = STEMSystemApp.getInstance().getNotificationModule().getNotificationArchive().getLastNotifications();
@@ -45,6 +47,7 @@ public class Notifications extends RequestInterface {
             i++;
         }
 
-        return jsonArray;
+        apiResponse.getJSONObject().put("entries", jsonArray);
+        return apiResponse.buildResponse();
     }
 }

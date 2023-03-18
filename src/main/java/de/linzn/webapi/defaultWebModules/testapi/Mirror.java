@@ -12,6 +12,7 @@
 package de.linzn.webapi.defaultWebModules.testapi;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
 import org.json.JSONObject;
@@ -22,10 +23,10 @@ public class Mirror extends RequestInterface {
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("postData", httpRequestClientPayload.getPostData());
-        jsonObject.put("queryData", httpRequestClientPayload.getQueryData());
-        return jsonObject;
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.getJSONObject().put("postData", httpRequestClientPayload.getPostData());
+        apiResponse.getJSONObject().put("queryData", httpRequestClientPayload.getQueryData());
+        return apiResponse.buildResponse();
     }
 
 }

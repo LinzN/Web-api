@@ -12,10 +12,12 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
 import de.stem.stemSystem.STEMSystemApp;
 import de.stem.stemSystem.modules.informationModule.InformationBlock;
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -32,7 +34,8 @@ public class InformationBlocks extends RequestInterface {
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
 
-        JSONObject jsonObject = new JSONObject();
+        ApiResponse apiResponse = new ApiResponse();
+
 
         JSONArray activeInformationBlocksJSON = new JSONArray();
         ArrayList<InformationBlock> activeInformationBlocks = STEMSystemApp.getInstance().getInformationModule().getActiveInformationBlocks();
@@ -48,10 +51,10 @@ public class InformationBlocks extends RequestInterface {
             archivedInformationBlocksJSON.put(convertToJSONObject(informationBlock));
         }
 
-        jsonObject.put("active", activeInformationBlocksJSON);
-        jsonObject.put("archived", archivedInformationBlocksJSON);
+        apiResponse.getJSONObject().put("active", activeInformationBlocksJSON);
+        apiResponse.getJSONObject().put("archived", archivedInformationBlocksJSON);
 
-        return jsonObject;
+        return apiResponse.buildResponse();
     }
 
     private JSONObject convertToJSONObject(InformationBlock informationBlock) {

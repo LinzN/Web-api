@@ -12,6 +12,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
 import de.stem.stemSystem.STEMSystemApp;
@@ -27,6 +28,8 @@ public class ConsoleOutput extends RequestInterface {
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
+        ApiResponse apiResponse = new ApiResponse();
+
         JSONArray jsonArray = new JSONArray();
         final List<LogRecord> list = STEMSystemApp.LOGGER.getLastEntries(30);
         for (LogRecord entry : new ArrayList<>(list)) {
@@ -36,6 +39,7 @@ public class ConsoleOutput extends RequestInterface {
             jsonObject.put("level", entry.getLevel().getName());
             jsonArray.put(jsonObject);
         }
-        return jsonArray;
+        apiResponse.getJSONObject().put("entries", jsonArray);
+        return apiResponse.buildResponse();
     }
 }

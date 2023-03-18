@@ -14,9 +14,11 @@ package de.linzn.webapi.defaultWebModules.stemsystem;
 import com.sun.net.httpserver.HttpExchange;
 import de.linzn.openJL.system.HardwareResources;
 import de.linzn.systemChain.callbacks.NetworkScheduler;
+import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
 import de.stem.stemSystem.utils.JavaUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -25,6 +27,8 @@ public class SystemStatus extends RequestInterface {
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
+        ApiResponse apiResponse = new ApiResponse();
+
         double load = HardwareResources.getSystemLoad();
         int cores = HardwareResources.getCoreAmount();
 
@@ -38,15 +42,14 @@ public class SystemStatus extends RequestInterface {
         long spaceUsable = HardwareResources.getUsableSpace();
         long spaceTotal = HardwareResources.getTotalSpace();
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("ping", NetworkScheduler.getLastPing());
-        jsonObject.put("status", "OK");
-        jsonObject.put("cpuLoad", cpuLoad);
-        jsonObject.put("memoryLoad", memoryLoad);
-        jsonObject.put("memoryTotal", maxMemory);
-        jsonObject.put("memoryUsed", usedMemory);
-        jsonObject.put("spaceUsable", spaceUsable);
-        jsonObject.put("spaceTotal", spaceTotal);
-        return jsonObject;
+        apiResponse.getJSONObject().put("ping", NetworkScheduler.getLastPing());
+        apiResponse.getJSONObject().put("status", "OK");
+        apiResponse.getJSONObject().put("cpuLoad", cpuLoad);
+        apiResponse.getJSONObject().put("memoryLoad", memoryLoad);
+        apiResponse.getJSONObject().put("memoryTotal", maxMemory);
+        apiResponse.getJSONObject().put("memoryUsed", usedMemory);
+        apiResponse.getJSONObject().put("spaceUsable", spaceUsable);
+        apiResponse.getJSONObject().put("spaceTotal", spaceTotal);
+        return apiResponse.buildResponse();
     }
 }
