@@ -13,11 +13,8 @@ package de.linzn.webapi.defaultWebModules;
 
 import de.linzn.webapi.WebApiPlugin;
 import de.linzn.webapi.defaultWebModules.emergency.Reboot;
-import de.linzn.webapi.defaultWebModules.stemsystem.InformationBlocks;
+import de.linzn.webapi.defaultWebModules.stemsystem.*;
 import de.linzn.webapi.defaultWebModules.testapi.Mirror;
-import de.linzn.webapi.defaultWebModules.stemsystem.ConsoleOutput;
-import de.linzn.webapi.defaultWebModules.stemsystem.Notifications;
-import de.linzn.webapi.defaultWebModules.stemsystem.SystemStatus;
 import de.linzn.webapi.modules.WebModule;
 
 public class DefaultHandlerSetup {
@@ -41,6 +38,7 @@ public class DefaultHandlerSetup {
     }
     private void setupStemHandler() {
         WebModule stemWebModule = new WebModule("stemsystem");
+        stemWebModule.registerSubCallHandler(new StemInfo(), "steminfo");
         stemWebModule.registerSubCallHandler(new SystemStatus(), "status");
         stemWebModule.registerSubCallHandler(new ConsoleOutput(), "console");
         stemWebModule.registerSubCallHandler(new Notifications(), "notifications");
