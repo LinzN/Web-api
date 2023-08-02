@@ -43,6 +43,8 @@ public class DefaultHandlerSetup {
         stemWebModule.registerSubCallHandler(new ConsoleOutput(), "console");
         stemWebModule.registerSubCallHandler(new Notifications(), "notifications");
         stemWebModule.registerSubCallHandler(new InformationBlocks(), "informationblocks");
+        stemWebModule.registerSubCallHandler(new PluginsInfo(), "pluginsinfo");
+        stemWebModule.registerSubCallHandler(new TaskInfo(), "taskinfo");
         WebApiPlugin.webApiPlugin.getWebServer().enableCallModule(stemWebModule);
     }
 
