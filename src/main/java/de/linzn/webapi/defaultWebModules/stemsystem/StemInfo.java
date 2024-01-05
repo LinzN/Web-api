@@ -31,7 +31,7 @@ public class StemInfo extends RequestInterface {
 
         apiResponse.getJSONObject().put("version", version);
         apiResponse.getJSONObject().put("systemName", systemName);
-        apiResponse.getJSONObject().put("label", systemName + "_" + version);
+        apiResponse.getJSONObject().put("label", version);
         return apiResponse.buildResponse();
     }
 }
