@@ -48,7 +48,7 @@ public class HealthCheckInfo extends RequestInterface {
                     feedback.put("description", healthCheckFeedback.getDescription());
                     levelFeedbacks.put(feedback);
                 }
-                feedbacks.put(healthCheck.getName(), levelFeedbacks);
+                feedbacks.put(healthCheckLevel.name(), levelFeedbacks);
             }
             jsonObject.put("feedbacks", feedbacks);
             jsonArray.put(jsonObject);
