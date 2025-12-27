@@ -13,18 +13,14 @@
 package de.linzn.webapi.defaultWebModules.emergency;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.STEMApp;
+import de.linzn.stem.taskManagment.operations.defaultOperations.StemRestartOperation;
 import de.linzn.webapi.WebApiPlugin;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.STEMSystemApp;
-import de.stem.stemSystem.taskManagment.operations.defaultOperations.StemRestartOperation;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.LogRecord;
 
 public class Reboot extends RequestInterface {
 
@@ -38,16 +34,16 @@ public class Reboot extends RequestInterface {
             ipAddress = exchange.getRemoteAddress().getAddress().getHostAddress();
         }
 
-        STEMSystemApp.LOGGER.CORE("--EMERGENCY WEBAPI--");
-        STEMSystemApp.LOGGER.CORE("Request emergency reboot from WEBAPI:");
-        STEMSystemApp.LOGGER.CORE("Requester IP: " + ipAddress);
-        STEMSystemApp.LOGGER.CORE("PostData: " + postData.toString());
+        STEMApp.LOGGER.CORE("--EMERGENCY WEBAPI--");
+        STEMApp.LOGGER.CORE("Request emergency reboot from WEBAPI:");
+        STEMApp.LOGGER.CORE("Requester IP: " + ipAddress);
+        STEMApp.LOGGER.CORE("PostData: " + postData.toString());
 
         String requestAction = postData.get("requestAction").toString();
 
         if (requestAction.equalsIgnoreCase("WRITE")) {
             StemRestartOperation stemRestartOperation = new StemRestartOperation();
-            STEMSystemApp.getInstance().getScheduler().runTask(WebApiPlugin.webApiPlugin, stemRestartOperation);
+            STEMApp.getInstance().getScheduler().runTask(WebApiPlugin.webApiPlugin, stemRestartOperation);
             jsonObject.put("error", 0);
         } else {
             jsonObject.put("error", 404);

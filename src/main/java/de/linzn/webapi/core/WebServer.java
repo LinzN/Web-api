@@ -14,8 +14,8 @@ package de.linzn.webapi.core;
 
 
 import com.sun.net.httpserver.HttpServer;
+import de.linzn.stem.STEMApp;
 import de.linzn.webapi.modules.WebModule;
-import de.stem.stemSystem.STEMSystemApp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -34,7 +34,7 @@ public class WebServer {
             apiServer = HttpServer.create(new InetSocketAddress(host, port), 0);
             apiServer.setExecutor(Executors.newCachedThreadPool());
         } catch (IOException e) {
-            STEMSystemApp.LOGGER.ERROR(e);
+            STEMApp.LOGGER.ERROR(e);
         }
     }
 

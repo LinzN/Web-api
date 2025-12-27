@@ -13,10 +13,10 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.utils.JavaUtils;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.utils.JavaUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;

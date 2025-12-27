@@ -15,8 +15,8 @@ package de.linzn.webapi.modules;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import de.linzn.stem.STEMApp;
 import de.linzn.webapi.core.HttpRequestClientPayload;
-import de.stem.stemSystem.STEMSystemApp;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
@@ -103,7 +103,7 @@ public class WebModule implements HttpHandler {
             os.write(data.toString().getBytes(StandardCharsets.UTF_8));
             os.close();
         } catch (Exception e) {
-            STEMSystemApp.LOGGER.ERROR(e);
+            STEMApp.LOGGER.ERROR(e);
         }
     }
 

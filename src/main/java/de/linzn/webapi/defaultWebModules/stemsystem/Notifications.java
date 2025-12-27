@@ -13,11 +13,11 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.STEMApp;
+import de.linzn.stem.modules.notificationModule.archive.ArchivedNotification;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.STEMSystemApp;
-import de.stem.stemSystem.modules.notificationModule.archive.ArchivedNotification;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -34,7 +34,7 @@ public class Notifications extends RequestInterface {
         ApiResponse apiResponse = new ApiResponse();
         Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy", Locale.GERMANY);
 
-        List<ArchivedNotification> list = STEMSystemApp.getInstance().getNotificationModule().getNotificationArchive().getLastNotifications();
+        List<ArchivedNotification> list = STEMApp.getInstance().getNotificationModule().getNotificationArchive().getLastNotifications();
 
         JSONArray jsonArray = new JSONArray();
         int i = 1;

@@ -26,17 +26,18 @@ public class DefaultHandlerSetup {
         this.setupStemHandler();
     }
 
-    private void setupEmergencyHandler(){
+    private void setupEmergencyHandler() {
         WebModule emergencyModule = new WebModule("emergency");
         emergencyModule.registerSubCallHandler(new Reboot(), "reboot");
         WebApiPlugin.webApiPlugin.getWebServer().enableCallModule(emergencyModule);
     }
 
-    private void setupTestApiHandler(){
+    private void setupTestApiHandler() {
         WebModule testApiModule = new WebModule("testapi");
         testApiModule.registerSubCallHandler(new Mirror(), "mirror");
         WebApiPlugin.webApiPlugin.getWebServer().enableCallModule(testApiModule);
     }
+
     private void setupStemHandler() {
         WebModule stemWebModule = new WebModule("stemsystem");
         stemWebModule.registerSubCallHandler(new StemInfo(), "steminfo");
@@ -47,7 +48,7 @@ public class DefaultHandlerSetup {
         stemWebModule.registerSubCallHandler(new PluginsInfo(), "pluginsinfo");
         stemWebModule.registerSubCallHandler(new TaskInfo(), "taskinfo");
         stemWebModule.registerSubCallHandler(new HealthCheckInfo(), "healthcheckinfo");
-        stemWebModule.registerSubCallHandler(new ComplianceCheck(), "compliancecheck");
+        stemWebModule.registerSubCallHandler(new ComplianceChecks(), "compliancecheck");
         WebApiPlugin.webApiPlugin.getWebServer().enableCallModule(stemWebModule);
     }
 

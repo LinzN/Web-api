@@ -13,10 +13,10 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.STEMApp;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.STEMSystemApp;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -32,11 +32,11 @@ public class ConsoleOutput extends RequestInterface {
         ApiResponse apiResponse = new ApiResponse();
 
         JSONArray jsonArray = new JSONArray();
-        final List<LogRecord> list = STEMSystemApp.LOGGER.getLastEntries(30);
+        final List<LogRecord> list = STEMApp.LOGGER.getLastEntries(30);
         for (LogRecord entry : new ArrayList<>(list)) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("text", entry.getMessage());
-            jsonObject.put("htmlText", STEMSystemApp.logSystem.htmlFormatter.format(entry));
+            jsonObject.put("htmlText", STEMApp.logSystem.htmlFormatter.format(entry));
             jsonObject.put("level", entry.getLevel().getName());
             jsonArray.put(jsonObject);
         }

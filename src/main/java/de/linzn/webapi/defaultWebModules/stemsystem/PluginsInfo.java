@@ -13,11 +13,11 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.STEMApp;
+import de.linzn.stem.modules.pluginModule.STEMPlugin;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.STEMSystemApp;
-import de.stem.stemSystem.modules.pluginModule.STEMPlugin;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,7 +30,7 @@ public class PluginsInfo extends RequestInterface {
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         ApiResponse apiResponse = new ApiResponse();
 
-        ArrayList<STEMPlugin> plugins = new ArrayList<>(STEMSystemApp.getInstance().getPluginModule().getLoadedPlugins());
+        ArrayList<STEMPlugin> plugins = new ArrayList<>(STEMApp.getInstance().getPluginModule().getLoadedPlugins());
 
         JSONArray pluginsList = new JSONArray();
 

@@ -13,9 +13,9 @@
 package de.linzn.webapi;
 
 
+import de.linzn.stem.modules.pluginModule.STEMPlugin;
 import de.linzn.webapi.core.WebServer;
 import de.linzn.webapi.defaultWebModules.DefaultHandlerSetup;
-import de.stem.stemSystem.modules.pluginModule.STEMPlugin;
 
 
 public class WebApiPlugin extends STEMPlugin {

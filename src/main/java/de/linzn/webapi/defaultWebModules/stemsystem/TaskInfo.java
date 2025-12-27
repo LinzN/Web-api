@@ -13,16 +13,12 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.STEMApp;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.STEMSystemApp;
-import de.stem.stemSystem.modules.pluginModule.STEMPlugin;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class TaskInfo extends RequestInterface {
 
@@ -30,7 +26,7 @@ public class TaskInfo extends RequestInterface {
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         ApiResponse apiResponse = new ApiResponse();
 
-        int taskSize = STEMSystemApp.getInstance().getScheduler().getTasks().size();
+        int taskSize = STEMApp.getInstance().getScheduler().getTasks().size();
         apiResponse.getJSONObject().put("backgroundTasks", taskSize);
         return apiResponse.buildResponse();
     }

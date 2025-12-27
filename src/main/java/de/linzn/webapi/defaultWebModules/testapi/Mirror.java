@@ -16,7 +16,6 @@ import com.sun.net.httpserver.HttpExchange;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import org.json.JSONObject;
 
 import java.io.IOException;
 

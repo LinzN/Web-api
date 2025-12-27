@@ -13,12 +13,11 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.linzn.stem.STEMApp;
+import de.linzn.stem.modules.informationModule.InformationBlock;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
-import de.stem.stemSystem.STEMSystemApp;
-import de.stem.stemSystem.modules.informationModule.InformationBlock;
-import org.checkerframework.checker.units.qual.A;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -39,14 +38,14 @@ public class InformationBlocks extends RequestInterface {
 
 
         JSONArray activeInformationBlocksJSON = new JSONArray();
-        ArrayList<InformationBlock> activeInformationBlocks = STEMSystemApp.getInstance().getInformationModule().getActiveInformationBlocks();
+        ArrayList<InformationBlock> activeInformationBlocks = STEMApp.getInstance().getInformationModule().getActiveInformationBlocks();
 
         for (InformationBlock informationBlock : activeInformationBlocks) {
             activeInformationBlocksJSON.put(convertToJSONObject(informationBlock));
         }
 
         JSONArray archivedInformationBlocksJSON = new JSONArray();
-        ArrayList<InformationBlock> archivedInformationBlocks = STEMSystemApp.getInstance().getInformationModule().getArchivedInformationBlocks();
+        ArrayList<InformationBlock> archivedInformationBlocks = STEMApp.getInstance().getInformationModule().getArchivedInformationBlocks();
 
         for (InformationBlock informationBlock : archivedInformationBlocks) {
             archivedInformationBlocksJSON.put(convertToJSONObject(informationBlock));
