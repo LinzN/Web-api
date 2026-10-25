@@ -10,6 +10,7 @@
  * or contact: niklas.linz@mirranet.de
  */
 
+
 package de.linzn.webapi.core;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -17,60 +18,91 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Parsed request data: URL-decoded query parameters and the request body (JSON object, JSON array or text).
+ * The body is limited to {@link #MAX_BODY_BYTES} to protect the server's memory.
+ */
 public class HttpRequestClientPayload {
+    public static final int MAX_BODY_BYTES = 1024 * 1024;
+
     private final HttpExchange httpExchange;
-    private Map<String, String> queryData;
-    private Object postData;
+    private final Map<String, String> queryData;
+    private final Object postData;
 
-    public HttpRequestClientPayload(HttpExchange httpExchange) {
+    public HttpRequestClientPayload(HttpExchange httpExchange) throws IOException {
         this.httpExchange = httpExchange;
-        this.readQueryData();
-        this.readPostData();
+        this.queryData = this.readQueryData();
+        this.postData = parseJson(this.readBody());
     }
 
-
-    private void readQueryData() {
-        String query = httpExchange.getRequestURI().getQuery();
-        this.queryData = new TreeMap<>();
-        if (query != null) {
-            for (String param : query.split("&")) {
-                String[] entry = param.split("=");
-                if (entry.length > 1) {
-                    queryData.put(entry[0], entry[1]);
-                } else {
-                    queryData.put(entry[0], "");
-                }
-            }
+    private static Object parseJson(String data) {
+        String trimmed = data.trim();
+        if (trimmed.isEmpty()) {
+            return data;
         }
-    }
-
-    private void readPostData() {
-        StringBuilder stringBuilder = new StringBuilder();
-        new BufferedReader(new InputStreamReader(httpExchange.getRequestBody()))
-                .lines()
-                .forEach((String s) -> stringBuilder.append(s).append("\n"));
-        this.postData = parseJson(stringBuilder.toString());
-    }
-
-    private Object parseJson(String data) {
         try {
-            return new JSONObject(data);
-        } catch (JSONException ex) {
-            try {
-                return new JSONArray(data);
-            } catch (JSONException ex1) {
-                return data;
+            if (trimmed.startsWith("{")) {
+                return new JSONObject(trimmed);
             }
+            if (trimmed.startsWith("[")) {
+                return new JSONArray(trimmed);
+            }
+        } catch (JSONException ignored) {
+            /* not valid JSON, keep the raw text */
+        }
+        return data;
+    }
+
+    private Map<String, String> readQueryData() {
+        Map<String, String> result = new TreeMap<>();
+        String query = httpExchange.getRequestURI().getRawQuery();
+        if (query == null || query.isEmpty()) {
+            return result;
+        }
+        for (String param : query.split("&")) {
+            if (param.isEmpty()) {
+                continue;
+            }
+            String[] entry = param.split("=", 2);
+            String key = URLDecoder.decode(entry[0], StandardCharsets.UTF_8);
+            String value = entry.length > 1 ? URLDecoder.decode(entry[1], StandardCharsets.UTF_8) : "";
+            result.put(key, value);
+        }
+        return result;
+    }
+
+    private String readBody() throws IOException {
+        try (InputStream in = httpExchange.getRequestBody()) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                if (out.size() + read > MAX_BODY_BYTES) {
+                    throw new IOException("Request body exceeds " + MAX_BODY_BYTES + " bytes");
+                }
+                out.write(buffer, 0, read);
+            }
+            return out.toString(StandardCharsets.UTF_8);
         }
     }
 
     public Object getPostData() {
         return postData;
+    }
+
+    /**
+     * @return the body as JSON object, or an empty object if the body is not a JSON object
+     */
+    public JSONObject getPostJson() {
+        return postData instanceof JSONObject jsonObject ? jsonObject : new JSONObject();
     }
 
     public Map<String, String> getQueryData() {

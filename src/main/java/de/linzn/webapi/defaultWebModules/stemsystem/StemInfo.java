@@ -13,7 +13,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.linzn.stem.utils.JavaUtils;
+import de.linzn.webapi.WebApiPlugin;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
 import de.linzn.webapi.modules.RequestInterface;
@@ -27,7 +27,7 @@ public class StemInfo extends RequestInterface {
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         ApiResponse apiResponse = new ApiResponse();
 
-        String version = JavaUtils.getVersion().toUpperCase();
+        String version = WebApiPlugin.webApiPlugin.getStemApi().system().getVersion().toUpperCase();
         String systemName = InetAddress.getLocalHost().getHostName().toUpperCase();
 
         apiResponse.getJSONObject().put("version", version);

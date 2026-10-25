@@ -10,19 +10,17 @@
  * or contact: niklas.linz@mirranet.de
  */
 
-package de.linzn.webapi;
 
+package de.linzn.webapi;
 
 import de.linzn.stem.modules.pluginModule.STEMPlugin;
 import de.linzn.webapi.core.WebServer;
 import de.linzn.webapi.defaultWebModules.DefaultHandlerSetup;
 
-
 public class WebApiPlugin extends STEMPlugin {
 
     public static WebApiPlugin webApiPlugin;
     private WebServer webServer;
-
 
     public WebApiPlugin() {
         webApiPlugin = this;
@@ -38,7 +36,9 @@ public class WebApiPlugin extends STEMPlugin {
 
     @Override
     public void onDisable() {
-        this.webServer.stop();
+        if (this.webServer != null) {
+            this.webServer.stop();
+        }
     }
 
     public WebServer getWebServer() {
@@ -48,8 +48,8 @@ public class WebApiPlugin extends STEMPlugin {
     private void setupConfig() {
         this.getDefaultConfig().getString("server.hostname", "0.0.0.0");
         this.getDefaultConfig().getInt("server.port", 8082);
+        /* Optional shared secret for /emergency/reboot (field "token" in the request); empty = LAN only */
+        this.getDefaultConfig().getString("emergency.token", "");
         this.getDefaultConfig().save();
     }
-
-
 }

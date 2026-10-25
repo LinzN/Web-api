@@ -30,7 +30,7 @@ public class ComplianceChecks extends RequestInterface {
     public Object callHttpEvent(HttpExchange httpExchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         ApiResponse apiResponse = new ApiResponse();
 
-        ArrayList<ComplianceCheck> complianceChecks = STEMApp.getInstance().getComplianceModule().getComplianceChecks();
+        ArrayList<ComplianceCheck> complianceChecks = STEMApp.getInstance().getComplianceModule().getComplianceChecks() /* core-only feature, not part of the plugin API */;
 
         JSONObject complianceObjects = new JSONObject();
         for (ComplianceCheck complianceCheck : complianceChecks) {

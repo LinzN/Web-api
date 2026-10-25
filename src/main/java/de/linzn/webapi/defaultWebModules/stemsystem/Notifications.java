@@ -13,7 +13,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.linzn.stem.STEMApp;
+import de.linzn.webapi.WebApiPlugin;
 import de.linzn.stem.modules.notificationModule.archive.ArchivedNotification;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
@@ -22,8 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.Format;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,9 +31,9 @@ public class Notifications extends RequestInterface {
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         ApiResponse apiResponse = new ApiResponse();
-        Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy", Locale.GERMANY);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Locale.GERMANY);
 
-        List<ArchivedNotification> list = STEMApp.getInstance().getNotificationModule().getNotificationArchive().getLastNotifications();
+        List<ArchivedNotification> list = WebApiPlugin.webApiPlugin.getStemApi().notifications().getRecent();
 
         JSONArray jsonArray = new JSONArray();
         int i = 1;
@@ -43,7 +42,7 @@ public class Notifications extends RequestInterface {
             jsonObject.put("id", i);
             jsonObject.put("source", notificationArchiveObject.source);
             jsonObject.put("notification", notificationArchiveObject.notification);
-            jsonObject.put("date", dateFormat.format(notificationArchiveObject.date));
+            jsonObject.put("date", dateFormat.format(notificationArchiveObject.getDate().toInstant().atZone(WebApiPlugin.webApiPlugin.getStemApi().system().getZone())));
             jsonArray.put(jsonObject);
             i++;
         }

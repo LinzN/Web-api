@@ -13,7 +13,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.linzn.stem.STEMApp;
+import de.linzn.webapi.WebApiPlugin;
 import de.linzn.stem.modules.informationModule.InformationBlock;
 import de.linzn.webapi.core.ApiResponse;
 import de.linzn.webapi.core.HttpRequestClientPayload;
@@ -22,14 +22,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 public class InformationBlocks extends RequestInterface {
-    Format dateFormat = new SimpleDateFormat("EEEE d MMMMM yyyy - HH:mm:ss", Locale.GERMANY);
+    /* DateTimeFormatter is thread-safe; SimpleDateFormat was shared between concurrent requests */
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy - HH:mm:ss", Locale.GERMANY);
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
@@ -38,14 +38,14 @@ public class InformationBlocks extends RequestInterface {
 
 
         JSONArray activeInformationBlocksJSON = new JSONArray();
-        ArrayList<InformationBlock> activeInformationBlocks = STEMApp.getInstance().getInformationModule().getActiveInformationBlocks();
+        List<InformationBlock> activeInformationBlocks = WebApiPlugin.webApiPlugin.getStemApi().information().getActive();
 
         for (InformationBlock informationBlock : activeInformationBlocks) {
             activeInformationBlocksJSON.put(convertToJSONObject(informationBlock));
         }
 
         JSONArray archivedInformationBlocksJSON = new JSONArray();
-        ArrayList<InformationBlock> archivedInformationBlocks = STEMApp.getInstance().getInformationModule().getArchivedInformationBlocks();
+        List<InformationBlock> archivedInformationBlocks = WebApiPlugin.webApiPlugin.getStemApi().information().getArchived();
 
         for (InformationBlock informationBlock : archivedInformationBlocks) {
             archivedInformationBlocksJSON.put(convertToJSONObject(informationBlock));
@@ -65,7 +65,7 @@ public class InformationBlocks extends RequestInterface {
         informationBlockJSON.put("sourcePlugin", informationBlock.getSourcePlugin().getPluginName());
         informationBlockJSON.put("icon", informationBlock.getIcon());
         informationBlockJSON.put("active", informationBlock.isActive());
-        informationBlockJSON.put("creationDate", dateFormat.format(new Date(informationBlock.getCreationTime())));
+        informationBlockJSON.put("creationDate", DATE_FORMAT.format(Instant.ofEpochMilli(informationBlock.getCreationTime()).atZone(WebApiPlugin.webApiPlugin.getStemApi().system().getZone())));
         return informationBlockJSON;
     }
 }

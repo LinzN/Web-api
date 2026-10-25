@@ -10,10 +10,10 @@
  * or contact: niklas.linz@mirranet.de
  */
 
+
 package de.linzn.webapi.defaultWebModules.emergency;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.linzn.stem.STEMApp;
 import de.linzn.stem.taskManagment.operations.defaultOperations.StemRestartOperation;
 import de.linzn.webapi.WebApiPlugin;
 import de.linzn.webapi.core.HttpRequestClientPayload;
@@ -21,34 +21,51 @@ import de.linzn.webapi.modules.RequestInterface;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 
+/**
+ * Emergency restart of STEM. Only accepted from the local network (loopback, private and link-local
+ * addresses). If "emergency.token" is configured, the request must also contain that token.
+ */
 public class Reboot extends RequestInterface {
+
+    private static boolean isLocalNetwork(InetAddress address) {
+        return address.isLoopbackAddress() || address.isSiteLocalAddress() || address.isLinkLocalAddress();
+    }
 
     @Override
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         JSONObject jsonObject = new JSONObject();
-        JSONObject postData = (JSONObject) httpRequestClientPayload.getPostData();
+        JSONObject postData = httpRequestClientPayload.getPostJson();
+        InetAddress remoteAddress = exchange.getRemoteAddress().getAddress();
+        String forwardedFor = exchange.getRequestHeaders().getFirst("X-FORWARDED-FOR");
 
-        String ipAddress = exchange.getRequestHeaders().getFirst("X-FORWARDED-FOR");
-        if (ipAddress == null) {
-            ipAddress = exchange.getRemoteAddress().getAddress().getHostAddress();
+        WebApiPlugin plugin = WebApiPlugin.webApiPlugin;
+        plugin.getPluginLogger().warning("--EMERGENCY WEBAPI-- reboot requested by " + remoteAddress.getHostAddress()
+                + (forwardedFor != null ? " (forwarded for " + forwardedFor + ")" : ""));
+
+        if (!isLocalNetwork(remoteAddress)) {
+            plugin.getPluginLogger().warning("Emergency reboot rejected: request not from the local network");
+            return jsonObject.put("error", 403);
+        }
+        String expectedToken = plugin.getDefaultConfig().getString("emergency.token", "");
+        if (!expectedToken.isEmpty()) {
+            String token = postData.optString("token", "");
+            boolean valid = MessageDigest.isEqual(expectedToken.getBytes(StandardCharsets.UTF_8), token.getBytes(StandardCharsets.UTF_8));
+            if (!valid) {
+                plugin.getPluginLogger().warning("Emergency reboot rejected: invalid token");
+                return jsonObject.put("error", 403);
+            }
         }
 
-        STEMApp.LOGGER.CORE("--EMERGENCY WEBAPI--");
-        STEMApp.LOGGER.CORE("Request emergency reboot from WEBAPI:");
-        STEMApp.LOGGER.CORE("Requester IP: " + ipAddress);
-        STEMApp.LOGGER.CORE("PostData: " + postData.toString());
-
-        String requestAction = postData.get("requestAction").toString();
-
-        if (requestAction.equalsIgnoreCase("WRITE")) {
-            StemRestartOperation stemRestartOperation = new StemRestartOperation();
-            STEMApp.getInstance().getScheduler().runTask(WebApiPlugin.webApiPlugin, stemRestartOperation);
+        if ("WRITE".equalsIgnoreCase(postData.optString("requestAction", ""))) {
+            plugin.getStemApi().scheduler().runAsync(new StemRestartOperation());
             jsonObject.put("error", 0);
         } else {
             jsonObject.put("error", 404);
         }
-
         return jsonObject;
     }
 }

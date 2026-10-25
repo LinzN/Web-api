@@ -13,7 +13,7 @@
 package de.linzn.webapi.defaultWebModules.stemsystem;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.linzn.stem.STEMApp;
+import de.linzn.webapi.WebApiPlugin;
 import de.linzn.stem.modules.healthModule.HealthCheck;
 import de.linzn.stem.modules.healthModule.HealthCheckFeedback;
 import de.linzn.stem.modules.healthModule.HealthCheckLevel;
@@ -32,7 +32,7 @@ public class HealthCheckInfo extends RequestInterface {
     public Object callHttpEvent(HttpExchange exchange, HttpRequestClientPayload httpRequestClientPayload) throws IOException {
         ApiResponse apiResponse = new ApiResponse();
 
-        List<HealthCheck> healthChecks = STEMApp.getInstance().getHealthModule().getHealthChecks();
+        List<HealthCheck> healthChecks = WebApiPlugin.webApiPlugin.getStemApi().health().getChecks();
 
         JSONArray jsonArray = new JSONArray();
 
