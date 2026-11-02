@@ -13,6 +13,9 @@ Dashboards read their data from here.
 ## Features
 
 - HTTP server on virtual threads, one thread per request, no thread pool to tune
+- **Login** for the API and for pages of other plugins (one session for both): users with PBKDF2 passwords,
+  session cookie, API tokens for scripts and devices, protection against password guessing and foreign pages
+- Pages of other plugins on the same server and origin (e.g. [web-dashboard](https://github.com/LinzN/web-dashboard))
 - Module system: `/<module>/<sub-path>` is routed to a handler of the owning plugin
 - CORS headers on every response, `OPTIONS` preflight requests are answered automatically
 - Request bodies up to 1 MB, parsed as JSON object, JSON array or plain text
@@ -44,7 +47,70 @@ Dashboards read their data from here.
 |-------------------|-----------|-----------------------------------------------------------------------------|
 | `server.hostname` | `0.0.0.0` | Address the server binds to                                                 |
 | `server.port`     | `8082`    | Port of the server                                                          |
+| `server.basePath` | `/apiv2`  | API modules are also reachable below this path (`/apiv2/stemsystem/status`), empty for none |
+| `server.trustedProxies` | `[127.0.0.1, ::1]` | Reverse proxies whose `X-Forwarded-For/-Proto/-Host` headers are believed (client address for the login protection, HTTPS detection) |
+| `auth.enabled`    | `true`    | Login required for everything except the login itself and `auth.publicPaths`; `false`: no login (as before) |
+| `auth.sessionHours` | `12`    | A login without "Angemeldet bleiben" ends after this idle time |
+| `auth.rememberDays` | `30`    | A login with "Angemeldet bleiben" ends after this idle time |
+| `auth.secureCookie` | `auto`  | `auto`: cookie only over HTTPS when the request came in over HTTPS (also through a trusted proxy); `true` / `false` |
+| `auth.cookieName` | `stem_session` | Name of the session cookie |
+| `auth.loginPath`  | `/login`  | Path of the login page |
+| `auth.publicPaths` | `[]`     | Paths (prefixes) that need no login, e.g. `/stemsystem/steminfo` |
 | `emergency.token` | *(empty)* | Optional shared secret for `/emergency/reboot`; empty = local network only |
+
+---
+
+## Login
+
+Every path needs a login unless `auth.enabled` is `false`. Browsers are sent to `/login` and come back after it;
+API requests without login get HTTP `401` (JSON). One login counts for the API and for every page a plugin
+registers on this server.
+
+**First start:** without users, web-api creates the user `admin` and writes a setup code to
+`plugins/web-api/codes/admin.txt`. Open `/login`, choose **Code einlösen**, enter user, code and a new password.
+
+**Users and tokens** (STEM console). Secrets are written to files in `plugins/web-api/codes/`, never to the log,
+because the log can be read through `/stemsystem/console` and by Mirra:
+
+```
+webapi users                      users with last login
+webapi user add <name>            new user, setup code in codes/<name>.txt (valid 2 days)
+webapi user reset <name>          new setup code (forgotten password)
+webapi user remove <name>         delete the user and end its logins
+webapi sessions [name]            active logins
+webapi logout <name|all>          end logins
+webapi tokens                     API tokens
+webapi token add <name>           new API token in codes/token-<name>.txt
+webapi token remove <name>        delete an API token
+```
+
+Users change their password on the login page (**Passwort ändern**); the other logins of the user end.
+
+**Scripts and devices** send an API token: `Authorization: Bearer stem_...`. Tokens work from any origin
+(CORS), cookies only from pages of this server.
+
+**Protection**
+
+- Passwords: PBKDF2-HMAC-SHA256, 600,000 iterations, own salt; at least 10 characters. Unknown users take as long
+  to check as known ones.
+- Session: random 256 bit id in an `HttpOnly`, `SameSite=Lax` cookie (`Secure` over HTTPS); the server only keeps
+  its SHA-256 in `plugins/web-api/sessions.json`. Logins survive a STEM restart.
+- Password guessing: after 5 failed attempts per client address or user name, every further attempt waits 30 s,
+  doubling up to 15 minutes. Failed logins are logged with the address.
+- Foreign pages: requests with a session cookie that change something (`POST`, ...) must come from this server
+  (`Origin` / `Sec-Fetch-Site`), otherwise `403`.
+- Login page: strict Content-Security-Policy, no external files, only redirects to paths on this server.
+- `users.json`, `sessions.json` and `codes/` have file mode 600 / 700.
+
+**Behind Apache** (HTTPS at the proxy, STEM on `10.50.0.11:8082`): forward everything, not only `/apiv2`, and
+remove the old Apache login. Add the proxy address to `server.trustedProxies`.
+
+```apache
+ProxyPreserveHost On
+RequestHeader set X-Forwarded-Proto "https"
+ProxyPass        / http://10.50.0.11:8082/
+ProxyPassReverse / http://10.50.0.11:8082/
+```
 
 ---
 
@@ -85,6 +151,7 @@ Every response is HTTP `200` with this envelope:
 
 `POST /emergency/reboot` with `{"requestAction": "WRITE"}` restarts STEM.
 
+- Needs a login or an API token like every endpoint
 - Only accepted from loopback, private (`10.x`, `172.16-31.x`, `192.168.x`) and link-local addresses
 - If `emergency.token` is set, the body must also contain `"token": "<secret>"`
 - Every request is logged with the remote address (and `X-Forwarded-For`, if present)
@@ -117,7 +184,16 @@ public class MyRequest extends RequestInterface {
 }
 ```
 
-The handler registered with the path `$_root` answers requests to `/<module>` without sub-path.
+The handler registered with the path `$_root` answers requests to `/<module>` without sub-path. Modules are
+reachable at `/<module>` and `<server.basePath>/<module>`, both behind the login. Inside a handler,
+`AuthService.current()` returns who sent the request.
+
+Pages (HTML, files) of a plugin behind the same login, browsers without login go to the login page:
+
+```java
+WebApiPlugin.webApiPlugin.getWebServer().registerPage("/", myHandler);   // "/" takes every path no module takes
+WebApiPlugin.webApiPlugin.getWebServer().unregisterPage("/");            // in onDisable()
+```
 Add `web-api` as `provided` dependency and to `depend` in `plugin.yml`.
 
 ---

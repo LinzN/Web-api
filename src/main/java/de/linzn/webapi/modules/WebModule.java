@@ -36,7 +36,8 @@ public class WebModule implements HttpHandler {
     private static final Map<String, String> HEADERS = Map.of(
             "Access-Control-Allow-Origin", "*",
             "Content-Type", "application/json; charset=UTF-8",
-            "Accept-Ranges", "bytes");
+            "Cache-Control", "no-store",
+            "X-Content-Type-Options", "nosniff");
 
     private final String moduleName;
     private final Map<String, RequestInterface> pathMap;
@@ -46,13 +47,17 @@ public class WebModule implements HttpHandler {
         this.pathMap = new ConcurrentHashMap<>();
     }
 
-    private static String[] splitURL(String rawURL) {
-        String path = rawURL.startsWith("/") ? rawURL.substring(1) : rawURL;
-        String[] rawArray = path.split("/");
-        if (rawArray.length <= 1) {
+    /**
+     * @return the path segments after the context path ("/apiv2/homedevice/device" in context "/apiv2/homedevice"
+     * gives ["device"])
+     */
+    private static String[] splitURL(String rawURL, String contextPath) {
+        String rest = rawURL.length() >= contextPath.length() ? rawURL.substring(contextPath.length()) : "";
+        rest = rest.startsWith("/") ? rest.substring(1) : rest;
+        if (rest.isEmpty()) {
             return new String[0];
         }
-        return Arrays.copyOfRange(rawArray, 1, rawArray.length);
+        return Arrays.stream(rest.split("/")).filter(part -> !part.isEmpty()).toArray(String[]::new);
     }
 
     public void registerSubCallHandler(RequestInterface requestInterface, String path) {
@@ -74,11 +79,11 @@ public class WebModule implements HttpHandler {
                 Headers headers = exchange.getResponseHeaders();
                 HEADERS.forEach(headers::set);
                 headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                headers.set("Access-Control-Allow-Headers", "Content-Type");
+                headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-            String[] args = splitURL(exchange.getRequestURI().getRawPath());
+            String[] args = splitURL(exchange.getRequestURI().getRawPath(), exchange.getHttpContext().getPath());
             RequestInterface requestInterface = args.length == 0
                     ? pathMap.get("$_root")
                     : pathMap.get(args[0].toLowerCase(Locale.ROOT));
